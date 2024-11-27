@@ -7,12 +7,23 @@ async function testController(req, res) {
     return res.send(response);
   } catch (error) {
     console.log(color.bgRed("ERRO NO CONTROLLER DE TEST"));
+    return res.status(500).send("ALGO DEU ERRADO :(");
   }
-  return res.status(500).send("ALGO DEU ERRADO :(");
 }
 
-const testControlles = {
+async function createSessionController(req, res) {
+  try {
+    const response = await testServices.createSessionService();
+    return res.status(201).send(response);
+  } catch (error) {
+    console.log(color.bgRed("ERRO AO CRIAR A SESSÃO"));
+    return res.status(500).send("ALGO DEU ERRADO :(");
+  }
+}
+
+const testControllers = {
   testController,
+  createSessionController
 };
 
-export default testControlles;
+export default testControllers;
