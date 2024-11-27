@@ -21,9 +21,20 @@ async function createSessionController(req, res) {
   }
 }
 
+async function deleteSessionController(req, res) {
+  const { id } = req.params;
+  try {
+    await testServices.deleteSessionService(id);
+    res.status(200).json({ message: "Sessão excluída com sucesso" });
+  } catch (error) {
+    res.status(500).json({ message: "Erro ao excluir a sessão", error: error.message });
+  }
+}
+
 const testControllers = {
   testController,
-  createSessionController
+  createSessionController,
+  deleteSessionController
 };
 
 export default testControllers;
