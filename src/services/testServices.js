@@ -3,8 +3,7 @@ import fs from "fs/promises";
 import path from "path";
 import { nanoid } from "nanoid";
 
-const SESSIONS_DIR = path.join("./src/database/sessions");
-
+const SESSIONS_DIR = path.resolve("./src/database/sessions");
 
 async function testService(req) {
   try {
@@ -21,8 +20,16 @@ async function testService(req) {
     console.log("ERRO AO BUSCAR MENSAGENS DE TEST", error);
   }
 }
-
-
+async function listMessagesService(sessionName) {
+  try{
+    const filePath = path.join(SESSIONS_DIR, `${sessionName}.json`);
+    const data = await fs.readFile(filePath, "utf8");
+    return JSON.parse(data);
+  }catch (error) {
+    console.error("ERRO AO LISTAR MENSAGENS:", error);
+    throw new Error("Não foi possível listar as mensagens");
+  }
+}
 async function createSessionService() {
   try { 
     const sessionId = nanoid(10);
@@ -32,6 +39,7 @@ async function createSessionService() {
     const data = {
       sessionId,
       createdAt: new Date().toISOString(),
+      messages: [],
     };
     await fs.writeFile(filePath, JSON.stringify(data, null, 2), "utf8");
     return { message: "Arquivo criado com sucesso", fileName };
@@ -54,12 +62,11 @@ async function deleteSessionService(sessionId) {
     throw new Error("Não foi possível deletar a sessão");
   }
 }
-
-
 const testServices = {
   testService,
   createSessionService,
-  deleteSessionService
+  deleteSessionService,
+  listMessagesService,
 };
 
 export default testServices;
